@@ -1,0 +1,19 @@
+# IDEs
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+# Distribution / packaging
+build/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+*.egg-info/
+*.egg
+
+# Environments
+# .env

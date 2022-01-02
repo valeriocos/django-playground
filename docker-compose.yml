@@ -1,0 +1,46 @@
+version: "3.6"
+
+networks:
+  local:
+    driver: bridge
+
+services:
+  mariadb:
+    image: mariadb:10.0
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=test_sh
+    command: --wait_timeout=2592000 --interactive_timeout=2592000 --max_connections=300 --sql_mode="STRICT_ALL_TABLES"
+    networks:
+      local:
+        aliases:
+          - mariadb
+
+  helloworld:
+    image: helloworld:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - django_settings=helloworld.settings
+        - pipenv_dev=0
+        - testing_env=1
+      cache_from:
+        - helloworld:latest
+    depends_on:
+      - "mariadb"
+    volumes:
+      - .:/code
+    links:
+      - mariadb:mariadb
+    working_dir: /code
+    command: "run bash ./scripts/runserver.sh"
+    ports:
+      - 8080:8080
+    networks:
+      local:
